@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@types/node": "^20.1.7",
+    "cesium-navigation-es6": "^3.0.8",
     "sass": "^1.62.1",
     "vue": "^3.2.47",
     "vue-router": "^4.2.0"
