@@ -23,6 +23,13 @@ const initCesium = (cesiumId: string) => {
         homeButton: false,   //主页按钮
         sceneModePicker: false, //二三维切换按钮（场景选择）
         infoBox: false,           //是否显示弹窗
+        // 禁用OIT机制设置透明度
+        orderIndependentTranslucency:false, //去掉大气层黑圈
+        contextOptions: {
+            webgl:{
+                alpha:true,
+            }
+        },
         //默认展示天地图
         imageryProvider: new Cesium.WebMapTileServiceImageryProvider({
           url: 'http://t0.tianditu.com/img_w/wmts?service=wmts&tk=60f76905b9b6dff60480f6c4c94f6b18&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles',
@@ -35,7 +42,14 @@ const initCesium = (cesiumId: string) => {
           maximumLevel: 18,
         })
     })
+    
+    viewer.scene.skyBox.show = false; //隐藏天空盒
+    viewer.scene.backgroundColor = new Cesium.Color(0,0,0,0); //设置背景透明
     new CesiumNavigation(viewer, options);
+
+    //灰色三维球
+    viewer.imageryLayers.removeAll(true); //删除所有底图 
+    viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#7f7f7f");
 }
 export{
     viewer,
