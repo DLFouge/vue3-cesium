@@ -43,13 +43,13 @@ const initCesium = (cesiumId: string) => {
         })
     })
     
-    viewer.scene.skyBox.show = false; //隐藏天空盒
-    viewer.scene.backgroundColor = new Cesium.Color(0,0,0,0); //设置背景透明
+    // viewer.scene.skyBox.show = false; //隐藏天空盒
+    // viewer.scene.backgroundColor = new Cesium.Color(0,0,0,0); //设置背景透明
     new CesiumNavigation(viewer, options);
 
     //灰色三维球
-    viewer.imageryLayers.removeAll(true); //删除所有底图 
-    viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#7f7f7f");
+    // viewer.imageryLayers.removeAll(true); //删除所有底图 
+    // viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#7f7f7f");
 }
 export{
     viewer,
