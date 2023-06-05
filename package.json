@@ -12,6 +12,7 @@
     "@types/node": "^20.1.7",
     "cesium-navigation-es6": "^3.0.8",
     "element-plus": "^2.3.5",
+    "ol": "^7.4.0",
     "sass": "^1.62.1",
     "vue": "^3.2.47",
     "vue-router": "^4.2.0"

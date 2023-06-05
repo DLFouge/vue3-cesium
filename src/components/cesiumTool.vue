@@ -1,6 +1,8 @@
 <template>
     <!-- cesium工具栏 -->
     <div class="cesiumTools" >
+        <!-- 多视图 -->
+        <baseScene/>
         <!-- 场景出图 -->
         <expImage/>
         <!-- 天空盒子显示与隐藏 -->
@@ -18,10 +20,12 @@ import * as Cesium from 'cesium';
 import {addPostRender,removePostRender} from './skyBox.js'
 import expImage from "../components/exportImage/index.vue"
 import {addAdditionalLayerOption} from "../components/additionalLayer"
+import baseScene from '../views/multiView/index.vue'
 
 export default defineComponent({
     components:{
-        expImage
+        expImage,
+        baseScene
     },
     setup() {
         //天空盒子
@@ -99,6 +103,7 @@ export default defineComponent({
         width: 20px;
         height: 20px;
         cursor: pointer;
+        margin-right: 10px;
     }
     .active{
         border: 1px solid rgb(0, 255, 242);

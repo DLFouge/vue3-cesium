@@ -1,4 +1,5 @@
 <template>
+    <!-- 场景出图 -->
     <div class="baseImage">
         <img src="@/assets/sceneIcon/image.svg" title="场景出图"  @click="imgShow = !imgShow"/>
     </div>
@@ -99,10 +100,10 @@ export default defineComponent({
 }
 .imageAction{
     position: absolute;
-    width:70px;
+    width: 70px;
     height: 20px;
-    right: 0;
-    top: 30px;
+    right: 70px;
+    top: 35px;
     background: rgba(60, 60, 60, 0.9);
     padding: 5px;
     display: flex;

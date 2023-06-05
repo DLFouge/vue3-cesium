@@ -8,6 +8,9 @@ const router = createRouter({
         },{       
             path: '/home',       
             component: () => import(`@/views/Home.vue`),     
+        },{
+            path: '/hawkEyeO',
+            component: () => import(`@/views/MultiView/HawkEyeO.vue`),
         }], 
     }); 
 export default router;
