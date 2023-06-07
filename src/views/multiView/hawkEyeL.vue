@@ -1,4 +1,4 @@
-<!--openlayers鹰眼-->
+<!--leaflet鹰眼-->
 <template>
     <div id="cesiumContainer"></div>
     <div id="eye"></div>
@@ -14,10 +14,8 @@
 import { defineComponent, onMounted,nextTick } from 'vue'
 import * as Cesium from 'cesium'
 import { useRouter } from 'vue-router';
-import { Map, View } from 'ol';
-import TileLayer from 'ol/layer/Tile';
-// import OSM from 'ol/source/OSM';
-import XYZ from 'ol/source/XYZ';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import {getCurrentExtent,getCenter} from '../../components/baseScene'
 
 export default defineComponent({
@@ -60,23 +58,18 @@ export default defineComponent({
         }; 
         //二维地图--鹰眼
         const initMap = (id:string) => {
-            let layer = new TileLayer({
-                // source: new OSM(),
-                source:  new XYZ({
-                    url: 'https://webrd03.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}',
-                    wrapX: true,
-                    crossOrigin: 'anonymous'
-                })
-            })
-            let map = new Map({
-                layers: [layer],
-                target: id,
-                view: new View({
-                    projection: 'EPSG:4326',
-                    center: [116.240601, 39.827107],
-                    zoom: 3
-                })
-            })
+            //1、定义图层样式
+            var layer = L.tileLayer("http://webrd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}");
+            //2、创建地图
+            let map = L.map(id, {
+                center: [39.89854, 116.3347],//中心坐标
+                zoom: 3,//缩放级别
+                minZoom: 3,
+                maxZoom: 14,
+                zoomControl: false, //缩放组件
+                attributionControl: false, //去掉右下角logol
+                layers: [layer],//图层
+            });
             return map;
         };
         let viewer:any = null;
@@ -95,20 +88,16 @@ export default defineComponent({
             let extent = getCurrentExtent(viewer)
             //获取Cesium当前视图的中心点
             let point = getCenter(viewer);
-            let mapView = map.getView();
             if(extent.xmin == -180 && extent.xmax == 180 && extent.ymin == -90 && extent.ymax == 90){
                 //整个地球在视域内
-                mapView.animate({zoom:2},{
-                    center: [point?.lon,point?.lat],
-                    duration: 0
-                })
+               map.setView([point?.lat,point?.lon],0)
             }else{
-                // 根据当前地图范围和大小获取 分辨率
-                let r = mapView.getResolutionForExtent([extent.xmin,extent.ymin,extent.xmax,extent.ymax],map.getSize());
-                // 设置分辨率
-                mapView.setResolution(r);
-                // 设置鹰眼图中心点
-                mapView.setCenter([point?.lon,point?.lat]);
+                // 设置鹰眼图范围
+                let i = L.latLng(extent.ymin,extent.xmin);
+                let s = L.latLng(extent.ymax,extent.xmax);
+                let bounds = L.latLngBounds(i,s);
+                let oBounds = bounds.pad(.5);
+                map.fitBounds(oBounds);
             }
         }
       

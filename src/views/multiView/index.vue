@@ -52,13 +52,13 @@ export default defineComponent({
             viewIndex.value = index;
             switch(name){
                 case 'cesium鹰眼':
-                    // router.push('/hawkEyeC');
+                    router.push('/hawkEyeC');
                     break;
                 case 'openlayers鹰眼':
                     router.push('/hawkEyeO');
                     break;
                 case "leaflet鹰眼":
-                    // router.push('/hawkEyeL');
+                    router.push('/hawkEyeL');
                     break
                 case '卷帘':
                     // router.push('/swipe');

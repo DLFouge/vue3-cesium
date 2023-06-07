@@ -12,12 +12,14 @@
     "@types/node": "^20.1.7",
     "cesium-navigation-es6": "^3.0.8",
     "element-plus": "^2.3.5",
+    "leaflet": "^1.9.4",
     "ol": "^7.4.0",
     "sass": "^1.62.1",
     "vue": "^3.2.47",
     "vue-router": "^4.2.0"
   },
   "devDependencies": {
+    "@types/leaflet": "^1.9.3",
     "@vitejs/plugin-vue": "^4.1.0",
     "cesium": "^1.105.2",
     "typescript": "^5.0.2",

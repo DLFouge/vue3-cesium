@@ -10,7 +10,13 @@ const router = createRouter({
             component: () => import(`@/views/Home.vue`),     
         },{
             path: '/hawkEyeO',
-            component: () => import(`@/views/MultiView/HawkEyeO.vue`),
-        }], 
+            component: () => import(`@/views/MultiView/hawkEyeO.vue`),
+        },{
+            path: '/hawkEyeL',
+            component: () => import(`@/views/MultiView/hawkEyeL.vue`),
+        },{
+            path: '/hawkEyeC',
+            component: () => import(`@/views/MultiView/hawkEyeC.vue`),
+        }] 
     }); 
 export default router;

@@ -1,22 +1,4 @@
 import * as Cesium from 'cesium'
-//获取地图中心点
-const getCenter = (viewer:any) =>{
-    let result = viewer.camera.pickEllipsoid(
-    new Cesium.Cartesian2(viewer.canvas.clientWidth / 2, viewer.canvas.clientHeight / 2)
-    );
-    if (!result) { 
-    return null;
-    }
-    let curPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(result);
-    let lon = curPosition.longitude * 180 / Math.PI;
-    let lat = curPosition.latitude * 180 / Math.PI;
-    let height = getHeight(viewer);
-    return {
-        lon: lon,
-        lat: lat,
-        height: height
-    };
-};
 /* 获取camera高度  */
 const getHeight = (viewer:any) => {
     let scene = viewer.scene;
@@ -26,8 +8,14 @@ const getHeight = (viewer:any) => {
 };
 //获取当前场景范围
 const getCurrentExtent = (viewer:any) =>{
-    // 范围对象
-    let extent = <any>{};
+    // 范围对象默认值--中国区域
+   let extent:any = {
+        xmin: 70,
+        xmax: 140,
+        ymin: 0,
+        ymax: 55,
+        height: 0
+    };
     // 得到当前三维场景
     let scene = viewer.scene;
     // 得到当前三维场景的椭球体
@@ -35,80 +23,86 @@ const getCurrentExtent = (viewer:any) =>{
     let canvas = scene.canvas;
     // canvas左上角
     let car3_lt = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(0, 0), ellipsoid);
+    if (car3_lt) {
+        // 在椭球体上
+        let carto_lt = ellipsoid.cartesianToCartographic(car3_lt);
+        extent.xmin = Cesium.Math.toDegrees(carto_lt.longitude);
+        extent.ymax = Cesium.Math.toDegrees(carto_lt.latitude);
+        extent.height = Math.max(extent.height, carto_lt.height);
+    } else {
+        // 不在椭球体上 
+        let xMax = canvas.width / 2;
+        let yMax = canvas.height / 2;
+        let car3_lt2;
+        // 这里每次10像素递加，一是10像素相差不大，二是为了提高程序运行效率
+        for (let yIdx = 0; yIdx <= yMax; yIdx += 10) {
+            let xIdx = yIdx <= xMax ? yIdx : xMax;
+            car3_lt2 = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(xIdx, yIdx), ellipsoid);
+            if (car3_lt2) break;
+        }
+        if (car3_lt2) {
+            let carto_lt = ellipsoid.cartesianToCartographic(car3_lt2);
+            extent.xmin = Cesium.Math.toDegrees(carto_lt.longitude);
+            extent.ymax = Cesium.Math.toDegrees(carto_lt.latitude);
+            extent.height = Math.max(extent.height, carto_lt.height);
+        }
+    }
     // canvas右下角
     let car3_rb = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(canvas.width, canvas.height), ellipsoid);
-    let yIndex = 0;
-    let xIndex = 0;
-    // 当canvas左上角和右下角全部在椭球体上
-    if (car3_lt && car3_rb) {
-    let carto_lt = ellipsoid.cartesianToCartographic(car3_lt);
-    let carto_rb = ellipsoid.cartesianToCartographic(car3_rb);
-    extent.xmin = Cesium.Math.toDegrees(carto_lt.longitude);
-    extent.ymax = Cesium.Math.toDegrees(carto_lt.latitude);
-    extent.xmax = Cesium.Math.toDegrees(carto_rb.longitude);
-    extent.ymin = Cesium.Math.toDegrees(carto_rb.latitude);
-    }else if(!car3_lt && car3_rb){ // 当canvas左上角不在但右下角在椭球体上
-    let car3_lt2 = null;
-    yIndex = 0;
-    do {
-        // 这里每次10像素递加，一是10像素相差不大，二是为了提高程序运行效率
-        yIndex <= canvas.height ? yIndex += 10 : canvas.height;
-        car3_lt2 = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(0, yIndex), ellipsoid);
-    } while (!car3_lt2);
-    let carto_lt2 = ellipsoid.cartesianToCartographic(car3_lt2);
-    let carto_rb2 = ellipsoid.cartesianToCartographic(car3_rb);
-    extent.xmin = Cesium.Math.toDegrees(carto_lt2.longitude);
-    extent.ymax = Cesium.Math.toDegrees(carto_lt2.latitude);
-    extent.xmax = Cesium.Math.toDegrees(carto_rb2.longitude);
-    extent.ymin = Cesium.Math.toDegrees(carto_rb2.latitude)
-    }else if(car3_lt && !car3_rb){ // 当canvas左上角在但右下角不在椭球体上
-    let car3_rb2 = null;
-    yIndex = canvas.height;
-    xIndex = canvas.width;
-    do {
-        // 这里每次10像素递加，一是10像素相差不大，二是为了提高程序运行效率
-        yIndex >= 10 ? yIndex -= 10 : 10;
-        xIndex >= 10 ? xIndex -= 10 : 10;
-        car3_rb2 = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(yIndex, yIndex), ellipsoid);
-    } while (!car3_rb2);
-    let carto_lt2 = ellipsoid.cartesianToCartographic(car3_lt);
-    let carto_rb2 = ellipsoid.cartesianToCartographic(car3_rb2);
-    extent.xmin = Cesium.Math.toDegrees(carto_lt2.longitude);
-    extent.ymax = Cesium.Math.toDegrees(carto_lt2.latitude);
-    extent.xmax = Cesium.Math.toDegrees(carto_rb2.longitude);
-    extent.ymin = Cesium.Math.toDegrees(carto_rb2.latitude);
-    }else if(!car3_lt && !car3_rb){ //canvas左上角和右下角都不在椭球体上
-    let car3_lt2 = null;
-    yIndex = 0;
-    xIndex = 0;
-    do {
-        // 这里每次10像素递加，一是10像素相差不大，二是为了提高程序运行效率
-        yIndex <= canvas.height ? yIndex += 10 : canvas.height;
-        xIndex <= canvas.width ? xIndex += 10 : canvas.width;
-        car3_lt2 = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(xIndex, yIndex), ellipsoid);
-    } while (!car3_lt2);
-    let car3_rb2 = null;
-    yIndex = canvas.height;
-    xIndex = canvas.width;
-    do {
-        // 这里每次10像素递加，一是10像素相差不大，二是为了提高程序运行效率
-        yIndex >= 10 ? yIndex -= 10 : 10;
-        xIndex >= 10 ? xIndex -= 10 : 10;
-        car3_rb2 = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(yIndex, yIndex), ellipsoid);
-    } while (!car3_rb2);
-    let carto_lt2 = ellipsoid.cartesianToCartographic(car3_lt2);
-    let carto_rb2 = ellipsoid.cartesianToCartographic(car3_rb2);
-    extent.xmin = Cesium.Math.toDegrees(carto_lt2.longitude);
-    extent.ymax = Cesium.Math.toDegrees(carto_lt2.latitude);
-    extent.xmax = Cesium.Math.toDegrees(carto_rb2.longitude);
-    extent.ymin = Cesium.Math.toDegrees(carto_rb2.latitude);
+ 	if (car3_rb) {
+        // 在椭球体上
+        let carto_rb = ellipsoid.cartesianToCartographic(car3_rb);
+        extent.xmax = Cesium.Math.toDegrees(carto_rb.longitude);
+        extent.ymin = Cesium.Math.toDegrees(carto_rb.latitude);
+        extent.height = Math.max(extent.height, carto_rb.height);
+    } else {
+        // 不在椭球体上
+        let xMax = canvas.width / 2;
+        let yMax = canvas.height / 2;
+
+        let car3_rb2;
+        // 这里每次10像素递减，一是10像素相差不大，二是为了提高程序运行效率
+        for (let yIdx = canvas.height; yIdx >= yMax; yIdx -= 10) {
+            let xIdx = yIdx >= xMax ? yIdx : xMax;
+            car3_rb2 = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(xIdx, yIdx), ellipsoid);
+            if (car3_rb2) break;
+        }
+        if (car3_rb2) {
+            let carto_rb = ellipsoid.cartesianToCartographic(car3_rb2);
+            extent.xmax = Cesium.Math.toDegrees(carto_rb.longitude);
+            extent.ymin = Cesium.Math.toDegrees(carto_rb.latitude);
+            extent.height = Math.max(extent.height, carto_rb.height);
+        }
     }
-    // 获取高度
-    extent.height = Math.ceil(viewer.camera.positionCartographic.height);
     return extent; 
 };
+//格式化 数字 小数位数
+const formatNum = (num:number, digits: number) =>{
+    return Number(Number(num).toFixed(digits || 0));
+};
+//取屏幕中心点坐标
+const pickCenterPoint = (scene:any) => {
+    let canvas = scene.canvas;
+    let center = new Cesium.Cartesian2(canvas.clientWidth / 2, canvas.clientHeight / 2);
+    let ray = scene.camera.getPickRay(center);
+    let target = scene.globe.pick(ray, scene);
+    if (!target) target = scene.camera.pickEllipsoid(center);
+    return target;
+};
+//提取屏幕中心点坐标
+const getCenter = (viewer:any) =>{
+    let position = pickCenterPoint(viewer.scene);
+    if (!position) return null;
+    let carto = Cesium.Cartographic.fromCartesian(position);
+    let result:any = {};
+    result.lat = formatNum(Cesium.Math.toDegrees(carto.latitude), 6);
+    result.lon = formatNum(Cesium.Math.toDegrees(carto.longitude), 6);
+    result.height = formatNum(carto.height, 2);
+    return result;
+}
 
 export{
     getCenter,
-    getCurrentExtent
+    getCurrentExtent,
+    getHeight
 }
