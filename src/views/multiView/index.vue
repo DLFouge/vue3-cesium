@@ -61,10 +61,10 @@ export default defineComponent({
                     router.push('/hawkEyeL');
                     break
                 case '卷帘':
-                    // router.push('/swipe');
+                    router.push('/swipe');
                     break;
                 case "分屏":
-                    // router.push('/doubleView');
+                    router.push('/doubleView');
                     break
                 default:   
                     viewIndex.value = -1;
