@@ -1,16 +1,19 @@
 <template>
     <div id="cesiumContainer" class="cesiumContainer"></div> 
     <CesiumTool />
+    <TreeSide />
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted } from 'vue';
 import {initCesium} from '../components/BaseCesium';
 import CesiumTool from '../components/cesiumTool.vue';
+import TreeSide from '../components/TreeSide.vue'
 
 export default defineComponent({
     components:{
-        CesiumTool
+        CesiumTool,
+        TreeSide
     },
     setup(){
         onMounted(async() => {

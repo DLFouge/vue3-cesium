@@ -6,7 +6,7 @@
     </div>
     <div class="home-icon" @click="backHome" title='返回首页'>
         <img
-            src="@/assets/viewTool/close.svg"
+            src="@/assets/close.svg"
             :style="{ transform: 'rotate(-90deg)'}"
         />
     </div>

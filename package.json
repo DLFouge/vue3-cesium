@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@types/node": "^20.1.7",
+    "axios": "^1.4.0",
     "cesium-navigation-es6": "^3.0.8",
     "element-plus": "^2.3.5",
     "leaflet": "^1.9.4",
