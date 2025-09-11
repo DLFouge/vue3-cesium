@@ -16,5 +16,10 @@
 12、[cesium坐标转换](https://juejin.cn/post/7242957405331144760)  
 13、[cesium控制及效果(五)：双屏对比](https://juejin.cn/post/7244783947821121597)  
 14、[cesium控制及效果(六)：卷帘对比](https://juejin.cn/post/7244818201976455226)  
+15、[cesium控制及效果(七)：绘制反选遮罩层](https://juejin.cn/post/7250491326260707365)  
+16、[cesium模拟3dTiles构建过程](https://juejin.cn/post/7317091780825776179)  
+17、[cesium聚合效果(一)：dataSource](https://juejin.cn/post/7317325003766513673)  
+18、[cesium可视化(一)：热力图](https://juejin.cn/post/7548268336418144271)  
+19、[cesium可视化(二)：全国温度图](https://juejin.cn/post/7548294525257580544)  
 
 
